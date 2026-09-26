@@ -22,16 +22,16 @@
 #### b. Quy trình mã hóa (Encryption Process)
 1. **Hoán vị ban đầu (Initial Permutation - IP)**: Sắp xếp lại thứ tự 64 bits đầu vào theo bảng hoán vị cố định.
 2. **16 Vòng Feistel (16 Rounds)**:
-   * Chia 64 bits thành 2 nửa 32 bits: Nửa trái L_0 và Nửa phải R_0.
-   * Tại mỗi vòng i (từ i = 1 đến 16), biến đổi theo công thức:
-     * **L_i = R_{i-1}**
-     * **R_i = L_{i-1} ⊕ f(R_{i-1}, K_i)**
-   * **Hàm f(R_{i-1}, K_i)** bao gồm: Expansion (E-box) -> XOR Key K_i -> S-Boxes Substitution -> Permutation (P-box).
-3. **Đảo ngược 2 nửa & Hoán vị cuối (Final Permutation - IP^-1)**: Ghép R_16 L_16 và thực hiện hoán vị IP^-1 thu được bản mã 64 bits.
+   * Chia 64 bits thành 2 nửa 32 bits: Nửa trái **L<sub>0</sub>** và Nửa phải **R<sub>0</sub>**.
+   * Tại mỗi vòng `i` (từ `i = 1` đến `16`), biến đổi theo công thức:
+     * **L<sub>i</sub> = R<sub>i-1</sub>**
+     * **R<sub>i</sub> = L<sub>i-1</sub> ⊕ f(R<sub>i-1</sub>, K<sub>i</sub>)**
+   * **Hàm f(R<sub>i-1</sub>, K<sub>i</sub>)** bao gồm: Expansion (E-box) → XOR Key K<sub>i</sub> → S-Boxes Substitution → Permutation (P-box).
+3. **Đảo ngược 2 nửa & Hoán vị cuối (Final Permutation - IP⁻¹)**: Ghép **R<sub>16</sub>L<sub>16</sub>** và thực hiện hoán vị **IP⁻¹** thu được bản mã 64 bits.
 
 #### c. Quy trình giải mã (Decryption Process)
 * Quy trình giải mã hoàn toàn giống hệt quy trình mã hóa.
-* Khóa vòng K_i được đưa vào theo thứ tự ngược lại: K_16, K_15, ..., K_1.
+* Khóa vòng **K<sub>i</sub>** được đưa vào theo thứ tự ngược lại: **K<sub>16</sub>, K<sub>15</sub>, ..., K<sub>1</sub>**.
 
 ---
 
@@ -41,18 +41,18 @@
 * **Loại mã hóa**: Mã hóa đối xứng khối dựa trên cấu trúc Mạng thế - hoán vị (Substitution-Permutation Network - SPN).
 * **Kích thước khối dữ liệu**: Cố định **128 bits** (ma trận trạng thái State 4x4 bytes).
 * **Độ dài khóa & Số vòng lặp**:
-  * AES-128: Khóa **128 bits** (16 bytes) -> **10 vòng mã hóa**.
-  * AES-192: Khóa **192 bits** (24 bytes) -> **12 vòng mã hóa**.
-  * AES-256: Khóa **256 bits** (32 bytes) -> **14 vòng mã hóa**.
+  * AES-128: Khóa **128 bits** (16 bytes) → **10 vòng mã hóa**.
+  * AES-192: Khóa **192 bits** (24 bytes) → **12 vòng mã hóa**.
+  * AES-256: Khóa **256 bits** (32 bytes) → **14 vòng mã hóa**.
 
 #### b. Quy trình mã hóa AES-128 (10 vòng)
 1. **Mở rộng khóa (Key Expansion)**: Tạo 11 khóa vòng từ khóa chính 128 bits.
-2. **Vòng khởi tạo (Initial Round)**: AddRoundKey (XOR State với K_0).
-3. **9 Vòng chuẩn (Rounds 1 đến 9)**: SubBytes -> ShiftRows -> MixColumns -> AddRoundKey.
-4. **Vòng cuối (Final Round - Vòng 10)**: Bỏ qua MixColumns (chỉ gồm SubBytes -> ShiftRows -> AddRoundKey).
+2. **Vòng khởi tạo (Initial Round)**: AddRoundKey (XOR State với K<sub>0</sub>).
+3. **9 Vòng chuẩn (Rounds 1 đến 9)**: SubBytes → ShiftRows → MixColumns → AddRoundKey.
+4. **Vòng cuối (Final Round - Vòng 10)**: Bỏ qua MixColumns (chỉ gồm SubBytes → ShiftRows → AddRoundKey).
 
 #### c. Quy trình giải mã AES
-* Thực hiện các phép toán nghịch đảo theo thứ tự ngược lại: **AddRoundKey** -> **InvShiftRows** -> **InvSubBytes** -> **InvMixColumns**.
+* Thực hiện các phép toán nghịch đảo theo thứ tự ngược lại: **AddRoundKey** → **InvShiftRows** → **InvSubBytes** → **InvMixColumns**.
 
 ---
 
@@ -72,10 +72,10 @@ RSA (Rivest–Shamir–Adleman) dựa trên tính chất toán học: **Phép nh
 
 ### 2.2. Quy trình sinh cặp khóa Bí mật (Private Key) và Công khai (Public Key)
 
-1. **Chọn hai số nguyên tố lớn**: Chọn ngẫu nhiên **p** và **q** (p khác q).
-2. **Tính Modulo n**: **n = p × q** (Độ dài bit của n chính là độ dài khóa RSA).
+1. **Chọn hai số nguyên tố lớn**: Chọn ngẫu nhiên **p** và **q** (p ≠ q).
+2. **Tính Modulo n**: **n = p × q** *(Độ dài bit của n chính là độ dài khóa RSA)*.
 3. **Tính hàm số Euler ϕ(n)**: **ϕ(n) = (p - 1) × (q - 1)**
-4. **Chọn Số mũ công khai e**: Chọn e sao cho **1 < e < ϕ(n)** và **gcd(e, ϕ(n)) = 1** (thường chọn e = 65537).
+4. **Chọn Số mũ công khai e**: Chọn e sao cho **1 < e < ϕ(n)** và **gcd(e, ϕ(n)) = 1** *(thường chọn e = 65537)*.
 5. **Tính Số mũ bí mật d**: Tìm d sao cho **(d × e) ≡ 1 (mod ϕ(n))**.
 
 **KẾT QUẢ BỘ KHÓA THU ĐƯỢC**:
@@ -89,18 +89,18 @@ RSA (Rivest–Shamir–Adleman) dựa trên tính chất toán học: **Phép nh
 ### 3.1. Các mô hình áp dụng thuật toán RSA
 
 #### Mô hình 1: Bảo mật / Xác thực người nhận (Receiver Authentication)
-* **Bên gửi (A)**: Dùng **Public Key của B (PU_B)** để mã hóa: **C = M^e_B mod n_B**
-* **Bên nhận (B)**: Dùng **Private Key của B (PR_B)** để giải mã: **M = C^d_B mod n_B**
+* **Bên gửi (A)**: Dùng **Public Key của B (PU<sub>B</sub>)** để mã hóa: **C = M<sup>e<sub>B</sub></sup> mod n<sub>B</sub>**
+* **Bên nhận (B)**: Dùng **Private Key của B (PR<sub>B</sub>)** để giải mã: **M = C<sup>d<sub>B</sub></sup> mod n<sub>B</sub>**
 * **Ý nghĩa**: Đạt được tính **Bảo mật (Confidentiality)**.
 
 #### Mô hình 2: Xác thực người gửi / Chữ ký số (Sender Authentication)
-* **Bên gửi (A)**: Dùng **Private Key của A (PR_A)** để mã hóa/ký: **S = M^d_A mod n_A**
-* **Bên nhận (B)**: Dùng **Public Key của A (PU_A)** để giải mã/xác minh: **M = S^e_A mod n_A**
+* **Bên gửi (A)**: Dùng **Private Key của A (PR<sub>A</sub>)** để mã hóa/ký: **S = M<sup>d<sub>A</sub></sup> mod n<sub>A</sub>**
+* **Bên nhận (B)**: Dùng **Public Key của A (PU<sub>A</sub>)** để giải mã/xác minh: **M = S<sup>e<sub>A</sub></sup> mod n<sub>A</sub>**
 * **Ý nghĩa**: Đạt được tính **Xác thực người gửi** và **Chống chối bỏ**.
 
 #### Mô hình 3: Kết hợp cả Xác thực người gửi và Xác thực người nhận
-* **Bên gửi (A)**: Ký bằng PR_A trước, sau đó mã hóa tiếp bằng PU_B.
-* **Bên nhận (B)**: Giải mã bằng PR_B trước, sau đó xác minh chữ ký bằng PU_A.
+* **Bên gửi (A)**: Ký bằng PR<sub>A</sub> trước, sau đó mã hóa tiếp bằng PU<sub>B</sub>.
+* **Bên nhận (B)**: Giải mã bằng PR<sub>B</sub> trước, sau đó xác minh chữ ký bằng PU_A.
 * **Ý nghĩa**: Đạt được đồng thời cả **Tính bảo mật** lẫn **Tính xác thực nguồn gốc**.
 
 ---
@@ -109,7 +109,7 @@ RSA (Rivest–Shamir–Adleman) dựa trên tính chất toán học: **Phép nh
 
 | Tiêu chí so sánh | Thuật toán đối xứng AES | Thuật toán bất đối xứng RSA |
 | :--- | :--- | :--- |
-| **Bản chất toán học** | Phép thế S-Box, dịch hàng, nhân ma trận Galois GF(2^8). | Phép lũy thừa modulo trên các số nguyên rất lớn (2048 - 4096 bits). |
+| **Bản chất toán học** | Phép thế S-Box, dịch hàng, nhân ma trận Galois GF(2<sup>8</sup>). | Phép lũy thừa modulo trên các số nguyên rất lớn (2048 - 4096 bits). |
 | **Tốc độ mã hóa / giải mã** | **Cực kỳ nhanh** (vài microsecond). Hỗ trợ phần cứng CPU AES-NI. | **Rất chậm** (chậm hơn AES từ **1.000 đến 10.000 lần**). |
 | **Kích thước dữ liệu** | Không giới hạn (mã hóa tập tin gigabyte mượt mà). | Bị giới hạn (dữ liệu mã hóa phải nhỏ hơn độ dài khóa RSA). |
 | **Quản lý khóa** | Khó phân phối khóa bí mật an toàn trên kênh truyền mở. | Dễ dàng chia sẻ Public Key công khai. |
