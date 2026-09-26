@@ -29,7 +29,7 @@
    > **R<sub>i</sub> = L<sub>i-1</sub> ⊕ f(R<sub>i-1</sub>, K<sub>i</sub>)**
 
    * **Hàm f(R<sub>i-1</sub>, K<sub>i</sub>)** bao gồm 4 bước: **Expansion (E-box) → XOR Key K<sub>i</sub> → S-Boxes Substitution → Permutation (P-box)**.
-3. **Đảo ngược 2 nửa & Hoán vị cuối (Final Permutation - IP⁻¹)**: Ghép **R<sub>16</sub>L<sub>16</sub>** và thực hiện hoán vị **IP⁻¹** thu me được bản mã 64 bits.
+3. **Đảo ngược 2 nửa & Hoán vị cuối (Final Permutation - IP⁻¹)**: Ghép **R<sub>16</sub>L<sub>16</sub>** và thực hiện hoán vị **IP⁻¹** thu được bản mã 64 bits.
 
 ### C. Quy trình giải mã (Decryption Process)
 * Quy trình giải mã hoàn toàn giống hệt quy trình mã hóa.
@@ -55,18 +55,13 @@
 
 ---
 
-## 1.3. VÍ DỤ MINH HỌA SỐ CỤ THỂ CHO MÃ HÓA AES
+## 1.3. VÍ DỤ CHẠY THỰC TẾ CHO MÃ HÓA AES
 
-Giả sử ta mã hóa chuỗi ký tự bản rõ **"TNUT"** bằng thuật toán AES-128:
-* **Văn bản gốc (Plaintext)**: `"TNUT"` → Chuyển sang biểu diễn Hexadecimal: `54 4E 55 54`
-* **Khóa AES 128-bit (Key)**: `0123456789ABCDEF0123456789ABCDEF`
-* **Chế độ mã hóa (Mode)**: CBC với Vector khởi tạo IV: `00000000000000000000000000000000`
-
-**Các bước biến đổi thực tế trong Python**:
-1. Dữ liệu `"TNUT"` được Đệm (Padding PKCS7) đủ 16 bytes: `54 4E 55 54 0C 0C 0C 0C 0C 0C 0C 0C 0C 0C 0C 0C`
-2. Đưa qua 10 vòng biến đổi mã hóa AES (SubBytes, ShiftRows, MixColumns, AddRoundKey).
-3. **Bản mã đầu ra (Ciphertext Hex)**: `7e9b04a5e01c3d18c942ab7f2e1a3b89`
-4. **Giải mã**: Đưa bản mã `7e9b04...` qua quá trình giải mã nghịch đảo với cùng Khóa bí mật → Thu lại chính xác chuỗi ban đầu `"TNUT"`.
+Thông số trích xuất trực tiếp từ file thực thi `aes_rsa_demo.py`:
+* **Văn bản gốc (Plaintext)**: `Sinh vien: Tran Hoang Xuan Vu - MSSV: K235480106080 - Lop: K59KMT`
+* **Bản mã AES thu được (Hex)**: `11106de1ca5032d79ccb50f3726a80f770cd1364b49c819df5c834e1a9bd...`
+* **Thời gian mã hóa AES**: `0.2466 ms`
+* **Thời gian giải mã AES**: `0.0245 ms`
 
 ### 📸 Ảnh minh chứng kết quả chạy chương trình thực tế:
 ![Python Demo Result](./images/01_python_demo.png)
@@ -105,21 +100,9 @@ RSA (Rivest–Shamir–Adleman) dựa trên tính chất toán học: **Phép nh
 
 ---
 
-### Bước 2: Quá trình Mã hóa (Encryption)
-Giả sử ta muốn gửi một thông điệp là số nguyên **M = 9**:
-* **Công thức mã hóa**: `C = Mᵉ mod n`
-* **Tính toán**:
-  > **C = 9¹³ mod 77 = 25,367,252,519 mod 77 = 58**
-* **Kết quả bản mã gửi đi**: **C = 58**
-
----
-
-### Bước 3: Quá trình Giải mã (Decryption)
-Bên nhận lấy bản mã **C = 58** dùng Khóa bí mật **PR = {37, 77}** để giải mã:
-* **Công thức giải mã**: `M = Cᵈ mod n`
-* **Tính toán**:
-  > **M = 58³⁷ mod 77 = 9**
-* **Kết quả**: Giải mã chính xác ra thông điệp gốc **M = 9**!
+### Bước 2: Quá trình Mã hóa & Giải mã
+* **Mã hóa (với M = 9)**: `C = 9¹³ mod 77 = 58`
+* **Giải mã (với C = 58)**: `M = 58³⁷ mod 77 = 9` (Thu lại chính xác thông điệp gốc).
 
 ---
 
@@ -155,22 +138,14 @@ Bên nhận lấy bản mã **C = 58** dùng Khóa bí mật **PR = {37, 77}** �
 
 ---
 
-## 3.3. Mô hình kết hợp sức mạnh của RSA và AES (Mã hóa lai - Hybrid Cryptosystem)
+## 3.3. VÍ DỤ KẾT HỢP CHẠY THỰC TẾ MÃ HÓA LAI (HYBRID)
 
-Trong thực tế (như HTTPS/TLS, PGP, SSH), mô hình **Mã hóa lai (Hybrid Encryption)** được áp dụng:
-
-### 💡 VÍ DỤ MINH HỌA QUY TRÌNH MÃ HÓA LAI THỰC TẾ:
-Giả sử người dùng **Trần Hoàng Xuân Vũ (A)** muốn gửi một tệp báo cáo lớn **100 MB** cho **Thầy giáo (B)**:
-
-1. **Bước 1 (Sinh khóa phiên AES)**: Bên gửi A tự sinh ra một **Khóa phiên AES 128-bit** dùng 1 lần: `K_AES = 0x1A2B3C4D5E6F7A8B...`
-2. **Bước 2 (Mã hóa File 100MB bằng AES)**: A dùng `K_AES` để mã hóa tệp 100 MB bằng AES-128. Nhờ tốc độ AES cực nhanh, quá trình này chỉ mất **vài milisecond**.
-3. **Bước 3 (Mã hóa Khóa phiên bằng RSA)**: A lấy **Public Key RSA của Thầy giáo (PU_B)** để mã hóa chuỗi khóa ngắn `K_AES`:
-   > `Encrypted_K_AES = RSA_Encrypt(PU_B, K_AES)`
-4. **Bước 4 (Gửi dữ liệu qua Internet)**: A đóng gói và gửi 2 thành phần cho Thầy giáo B:
-   * **Bản mã file 100 MB** (đã mã hóa bằng AES).
-   * **Bản mã của Khóa phiên** `Encrypted_K_AES` (đã mã hóa bằng RSA).
-5. **Bước 5 (Giải mã tại bên nhận)**:
-   * Thầy giáo B dùng **Private Key RSA của mình (PR_B)** giải mã ra `K_AES`.
-   * B dùng `K_AES` này giải mã toàn bộ file 100 MB thu lại báo cáo gốc ban đầu.
+Kết quả thực thi mô hình Mã hóa lai (RSA-2048 + AES-128) trong ảnh minh chứng:
+* **Khóa phiên AES ngẫu nhiên (128-bit Hex)**: `5e00be24d7298191e92b16c3f4d399fc`
+* **Khóa AES sau khi mã hóa bằng RSA Public Key (Hex)**: `6d2076739541e66aca101e147bd8094078213267d16add6a098c45b0511c...`
+* **Khóa AES giải mã bằng RSA Private Key**: `5e00be24d7298191e92b16c3f4d399fc`
+* **Kiểm tra độ chính xác**: Khóa khớp 100% (`True`).
+* **Thời gian RSA mã hóa khóa AES**: `0.4808 ms`
+* **Thời gian RSA giải mã khóa AES**: `0.8888 ms`
 
 ---
