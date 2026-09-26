@@ -63,7 +63,7 @@ Thông số trích xuất trực tiếp từ file thực thi `aes_rsa_demo.py`:
 * **Thời gian mã hóa AES**: `0.2466 ms`
 * **Thời gian giải mã AES**: `0.0245 ms`
 
-### 📸 Ảnh minh chứng kết quả chạy chương trình thực tế:
+### 📸 Ảnh minh chứng kết quả chạy chương trình demo:
 ![Python Demo Result](./images/01_python_demo.png)
 
 ---
@@ -142,10 +142,21 @@ RSA (Rivest–Shamir–Adleman) dựa trên tính chất toán học: **Phép nh
 
 Kết quả thực thi mô hình Mã hóa lai (RSA-2048 + AES-128) trong ảnh minh chứng:
 * **Khóa phiên AES ngẫu nhiên (128-bit Hex)**: `5e00be24d7298191e92b16c3f4d399fc`
-* **Khóa AES sau khi mã hóa bằng RSA Public Key (Hex)**: `6d2076739541e66aca101e147bd8094078213267d16add6a098c45b0511c...`
 * **Khóa AES giải mã bằng RSA Private Key**: `5e00be24d7298191e92b16c3f4d399fc`
 * **Kiểm tra độ chính xác**: Khóa khớp 100% (`True`).
-* **Thời gian RSA mã hóa khóa AES**: `0.4808 ms`
-* **Thời gian RSA giải mã khóa AES**: `0.8888 ms`
+
+---
+
+# 📌 MỤC 4. THỰC NGHIỆM ĐÁNH GIÁ HIỆU NĂNG (BENCHMARK)
+
+Để phân tích chuyên sâu hiệu năng giữa các giải pháp mã hóa, chương trình thực nghiệm `benchmark.py` được xây dựng để đo đạc thời gian xử lý thực tế trên các gói dữ liệu có dung lượng từ **64 Bytes** đến **1 MegaByte (1 MB)**.
+
+### 📸 Ảnh chụp kết quả đo đạc thực nghiệm Terminal:
+![Benchmark Results](./images/02_benchmark_results.png)
+
+### 📊 Nhận xét & Đánh giá kết quả thực nghiệm:
+1. **Hạn chế kích thước của RSA**: Khi kích thước gói dữ liệu vượt quá **190 Bytes**, thuật toán mã hóa trực tiếp RSA-2048 bị lỗi ngay lập tức (`LỖI: >190B (Quá tải)`) vì vượt quá dung lượng khối tối đa cho phép của chuẩn padding PKCS1-OAEP.
+2. **Ưu thế tuyệt đối của AES**: Tốc độ mã hóa AES vô cùng nhanh và tăng trưởng tuyến tính theo dung lượng dữ liệu (mã hóa file 1MB chỉ mất vài milisecond).
+3. **Hiệu quả của Mã hóa lai (Hybrid)**: Vừa giải quyết triệt để bài toán giới hạn dung lượng của RSA, vừa giữ được tốc độ xử lý nhanh xấp xỉ AES thuần túy, đồng thời đảm bảo an toàn tuyệt đối cho việc phân phối khóa qua kênh truyền công khai.
 
 ---
