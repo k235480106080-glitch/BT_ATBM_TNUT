@@ -215,8 +215,6 @@ Kết quả thực thi mô hình Mã hóa lai (RSA-2048 + AES-128) trong ảnh m
 * **Đường link truy cập cục bộ (Local)**: [http://127.0.0.1:5000](http://127.0.0.1:5000) *(hoặc [http://localhost:5000](http://localhost:5000))*
 * **Cách khởi chạy ứng dụng**:
   ```bash
-  # 1. Cài đặt thư viện cần thiết
-  pip install -r requirements.txt
-
-  # 2. Chạy Web Server Flask
-  python app.py
+  # CHẠY ĐOẠN LỆNH DƯỚI VÀO UBUNTUN
+  cd ~/my_atbm_project
+  python3 web_app.py
