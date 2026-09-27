@@ -159,29 +159,33 @@ Kết quả thực thi mô hình Mã hóa lai (RSA-2048 + AES-128) trong ảnh m
 
 # 📌 MỤC 5. LÝ THUYẾT VÀ KIẾN TRÚC PHÁT TRIỂN WEB DASHBOARD
 
-## 5.1. Kiến trúc hệ thống (System Architecture)
+## 5.1. KIẾN TRÚC HỆ THỐNG (SYSTEM ARCHITECTURE)
 
 Ứng dụng được thiết kế theo mô hình **Client-Server** kết hợp kiến trúc **RESTful API**:
 
 * **Backend Framework**: Sử dụng **Python Flask** đóng vai trò xử lý logic trung tâm, tiếp nhận các HTTP Request và trực tiếp gọi các thư viện mã hóa  trong bộ nhớ RAM.
 * **Frontend Interface**: Xây dựng bằng **HTML5**, **Tailwind CSS** (Giao diện Cyberpunk Dark Mode) và **JavaScript (Fetch API)** giúp gửi/nhận dữ liệu bất đồng bộ (AJAX) không cần tải lại trang.
 
-## 5.2. Danh sách API Endpoints và Cơ chế xử lý
+---
 
-| Endpoint | Phương thức | Chức năng | Quy trình xử lý tại Backend |
+## 5.2. DANH SÁCH API ENDPOINTS VÀ CƠ CHẾ XỬ LÝ
+
+| ENDPOINT | PHƯƠNG THỨC | CHỨC NĂNG | QUY TRÌNH XỬ LÝ TẠI BACKEND |
 | :--- | :--- | :--- | :--- |
-|  |  | Mã hóa AES-128 | Nhận Plaintext & Key → PKCS7 Padding → AES-CBC Encrypt → Trả về Hex & Thời gian (ms) |
-|  |  | Giải mã AES-128 | Nhận Ciphertext (Hex) & Key → AES-CBC Decrypt → Unpadding → Trả về Plaintext |
-|  |  | Sinh cặp khóa RSA | Khởi tạo ngẫu nhiên cặp khóa RSA 2048-bit lưu trữ tạm thời trong bộ nhớ RAM |
-|  |  | Mã hóa RSA | Mã hóa dữ liệu đầu vào bằng Public Key theo chuẩn padding PKCS1-OAEP |
-|  |  | Giải mã RSA | Giải mã bản mã Hex đầu vào bằng Private Key theo chuẩn PKCS1-OAEP |
-|  |  | Mã hóa Lai (Hybrid) | Sinh khóa phiên AES 128-bit ngẫu nhiên → Mã hóa Data bằng AES → Mã hóa Khóa phiên bằng RSA Public Key |
+|  |  | **Mã hóa AES-128** | Nhận Plaintext & Key → PKCS7 Padding → AES-CBC Encrypt → Trả về Hex & Thời gian (ms) |
+|  |  | **Giải mã AES-128** | Nhận Ciphertext (Hex) & Key → AES-CBC Decrypt → Unpadding → Trả về Plaintext |
+|  |  | **Sinh cặp khóa RSA** | Khởi tạo ngẫu nhiên cặp khóa RSA 2048-bit lưu trữ tạm thời trong bộ nhớ RAM |
+|  |  | **Mã hóa RSA** | Mã hóa dữ liệu đầu vào bằng Public Key theo chuẩn padding PKCS1-OAEP |
+|  |  | **Giải mã RSA** | Giải mã bản mã Hex đầu vào bằng Private Key theo chuẩn PKCS1-OAEP |
+|  |  | **Mã hóa Lai (Hybrid)** | Sinh khóa phiên AES 128-bit ngẫu nhiên → Mã hóa Data bằng AES → Mã hóa Khóa phiên bằng RSA Public Key |
 
-## 5.3. Luồng xử lý dữ liệu và Đo đạc hiệu năng
+---
+
+## 5.3. LUỒNG XỬ LÝ DỮ LIỆU VÀ ĐO ĐẠC HIỆU NĂNG
 
 1. **Client-side**: Người dùng nhập dữ liệu trên giao diện → JavaScript bắt sự kiện click → Đóng gói JSON gửi tới API tương ứng.
 2. **Server-side**:
-   * Đánh dấu thời gian bắt đầu xử lý  = 	ext{time.perf\_counter()}$.
+   * Đánh dấu thời gian bắt đầu xử lý: 
    * Thực thi thuật toán mã hóa/giải mã trong RAM.
-   * Tính toán thời gian phản hồi: $\Delta t = (t_{end} - t_0) 	imes 1000 \quad (ms)$.
-3. **Response**: Flask trả về kết quả định dạng JSON gồm bản mã Hex và tham số thời gian $\Delta t$ để hiển thị trực quan lên UI.
+   * Tính toán thời gian phản hồi: 
+3. **Response**: Flask trả về kết quả định dạng JSON gồm bản mã Hex và tham số thời gian  để hiển thị trực quan lên UI.
